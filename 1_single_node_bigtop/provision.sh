@@ -44,7 +44,7 @@ for i in hadoop-yarn-resourcemanager hadoop-yarn-nodemanager hadoop-mapreduce-hi
 #  user=root, access=EXECUTE, inode="/tmp/hadoop-yarn/staging":mapred:mapred:drwxrwx---
 su - hdfs -s /bin/bash -c "hadoop fs -chmod 777 /tmp/hadoop-yarn/staging"
 ## run mapreduce for function test
-hadoop jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar pi 2 2
+# hadoop jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar pi 2 2
 ## run HDFS test case
 dd if=/dev/zero of=100mb.img bs=1M count=100
 hadoop fs -put 100mb.img test.img
