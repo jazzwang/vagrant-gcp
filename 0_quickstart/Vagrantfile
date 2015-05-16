@@ -1,0 +1,11 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "gce"
+
+  config.vm.provider :google do |google, override|
+    google.name  = "quickstart"
+    google.zone  = "asia-east1-a" # Changhua County, Taiwan
+    override.ssh.username = ENV['USER']
+    override.ssh.private_key_path = ENV['GOOGLE_SSH_KEY_LOCATION']
+  end
+
+end
