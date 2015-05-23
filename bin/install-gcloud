@@ -1,0 +1,29 @@
+#!/bin/bash
+# 
+if [ "`id -u`" != "0" ]; then
+    alias apt-get="sudo apt-get"
+fi
+
+# To use gcloud compute, install the Google Cloud SDK if you have not already.
+# System Requirements: Google Cloud SDK runs on Linux, Mac OS X, and Windows, 
+#                      and requires Python 2.7.x
+if [ ! -x /usr/bin/python2.7 ]; then
+    apt-get -y install python2.7
+fi
+if [ ! -x /usr/bin/python ]; then
+    ln -s /usr/bin/python2.7 /usr/bin/python
+fi
+# Use 'curl' to download Google Cloud SDK
+if [ ! -x /usr/bin/curl ]; then
+    apt-get -y install curl
+fi
+# Download Google Cloud SDK and install
+if [ "$(which gcloud)" == "" ]; then
+    curl https://sdk.cloud.google.com | bash
+fi
+# Check 'gcloud'
+if [ "$(which gcloud)" == "" ]; then
+    source ~/.bashrc
+fi
+# Authenticating to Google Compute Engine
+gcloud auth login
