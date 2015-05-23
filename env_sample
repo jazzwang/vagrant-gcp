@@ -1,0 +1,5 @@
+GOOGLE_PROJECT_ID="hadoop-labs"
+GOOGLE_CLIENT_EMAIL="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@developer.gserviceaccount.com"
+GOOGLE_KEY_LOCATION="~/.gcp/hadoop-labs-000000000000.p12"
+GOOGLE_SSH_USER=$USER
+GOOGLE_SSH_KEY_LOCATION="~/.ssh/google_compute_engine"
