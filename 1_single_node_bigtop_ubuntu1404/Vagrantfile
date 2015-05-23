@@ -5,12 +5,12 @@ Vagrant.configure("2") do |config|
   ## Reference:
   # [1] https://github.com/mitchellh/vagrant/issues/1482
   # [2] https://www.shell-tips.com/2014/09/08/sudo-sorry-you-must-have-a-tty-to-run-sudo/
-  config.ssh.pty = true
+  # config.ssh.pty = true
 
   config.vm.provider :google do |google, override|
     google.name      = "bigtop"
     google.zone      = "asia-east1-a" # Changhua County, Taiwan
-    google.image     = "centos-6-v20150423"
+    google.image     = "ubuntu-1404-trusty-v20150316"
     google.disk_size = 40
     google.disk_name = "bigtop"
     override.ssh.username = ENV['USER']
