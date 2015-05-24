@@ -17,6 +17,9 @@ fi
 if [ ! -x /usr/bin/curl ]; then
     apt-get -y install curl wget
 fi
+if [ ! -x /usr/bin/ssh ]; then
+    apt-get -y install openssh-client
+fi
 # Download Google Cloud SDK and install
 if [ "$(which gcloud)" == "" ]; then
     curl https://sdk.cloud.google.com | bash
@@ -24,7 +27,6 @@ fi
 # Authenticating to Google Compute Engine
 echo "Authenticating to Google Compute Engine by running:
 
- $ source ~/.bashrc
- $ gcloud auth login
+ $ source ~/.bashrc ; gcloud auth login ; gcloud compute config-ssh
  $ gcloud config set project PROJECT
 "
