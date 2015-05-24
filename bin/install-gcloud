@@ -25,8 +25,11 @@ if [ "$(which gcloud)" == "" ]; then
     curl https://sdk.cloud.google.com | bash
 fi
 # Authenticating to Google Compute Engine
-echo "Authenticating to Google Compute Engine by running:
+echo "[37;42;1m
+ Authenticating to Google Compute Engine by running:
 
- $ source ~/.bashrc ; gcloud auth login ; gcloud compute config-ssh
+ $ source ~/.bashrc ; gcloud auth login
  $ gcloud config set project PROJECT
-"
+ $ gcloud compute config-ssh
+
+[0m"
