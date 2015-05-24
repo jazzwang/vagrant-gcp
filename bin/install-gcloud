@@ -15,15 +15,16 @@ if [ ! -x /usr/bin/python ]; then
 fi
 # Use 'curl' to download Google Cloud SDK
 if [ ! -x /usr/bin/curl ]; then
-    apt-get -y install curl
+    apt-get -y install curl wget
 fi
 # Download Google Cloud SDK and install
 if [ "$(which gcloud)" == "" ]; then
     curl https://sdk.cloud.google.com | bash
 fi
-# Check 'gcloud'
-if [ "$(which gcloud)" == "" ]; then
-    source ~/.bashrc
-fi
 # Authenticating to Google Compute Engine
-gcloud auth login
+echo "Authenticating to Google Compute Engine by running:
+
+ $ source ~/.bashrc
+ $ gcloud auth login
+ $ gcloud config set project PROJECT
+"

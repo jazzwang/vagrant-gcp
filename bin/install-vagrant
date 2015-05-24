@@ -1,0 +1,16 @@
+#!/bin/bash
+# 
+if [ "`id -u`" != "0" ]; then
+    alias apt-get="sudo apt-get"
+fi
+
+if [ ! -x /usr/bin/make ]; then
+  apt-get -y install wget make gcc ruby2.0-dev
+fi
+
+if [ ! -x /usr/bin/vagrant ]; then
+  wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+  dpkg -i vagrant*.deb
+  vagrant plugin install vagrant-google
+  vagrant plugin install vagrant-env
+fi
