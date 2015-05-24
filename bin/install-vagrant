@@ -6,7 +6,8 @@ if [ "`id -u`" != "0" ]; then
 fi
 
 if [ ! -x /usr/bin/make ]; then
-  apt-get -y install wget make gcc ruby2.0-dev ruby
+  apt-get update
+  apt-get -y install libc-dev wget make gcc ruby2.0-dev ruby ruby-json ruby-ffi
 fi
 
 if [ ! -x /usr/bin/vagrant ]; then
