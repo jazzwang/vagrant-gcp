@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -it --name gcp -h gcp -v ${PWD}:/vagrant ubuntu:14.04 /bin/bash 
+docker run -it --name gcp -h gcp -v ${PWD}:/root/vagrant-gcp ubuntu:14.04 /bin/bash 
