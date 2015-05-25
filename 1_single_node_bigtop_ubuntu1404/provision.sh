@@ -2,7 +2,7 @@
 echo "[32;1mUSER=$(whoami)[0m"
 ## in ubuntu , hostname mapping to 127.0.1.1
 ## It cause problem for HBase .... can not connet to 127.0.1.1:60020
-echo "127.0.0.1 localhost $(hostname)" > /etc/hosts
+echo "127.0.0.1 localhost $(hostname)" >> /etc/hosts
 ## generate locale for Traditional Chinese
 locale-gen "zh_TW.UTF-8"
 ## check for command 'add-apt-repository'
@@ -15,8 +15,8 @@ if [ ! -x /usr/bin/add-apt-repository ]; then
     apt-get -f -y install python-software-properties
 fi
 ## setup bigtop related apt repository
-wget -q http://archive.apache.org/dist/bigtop/bigtop-0.7.0/repos/GPG-KEY-bigtop -O- | sudo apt-key add -
-add-apt-repository -y "deb http://bigtop.s3.amazonaws.com/releases/0.7.0/ubuntu/precise/x86_64 bigtop contrib"
+wget -q http://archive.apache.org/dist/bigtop/bigtop-0.8.0/repos/GPG-KEY-bigtop -O- | sudo apt-key add -
+add-apt-repository -y "deb http://bigtop.s3.amazonaws.com/releases/0.8.0/ubuntu/precise/x86_64 bigtop contrib"
 apt-get -y update
 ## install bigtop related packages
 apt-get install -y --force-yes vim locales openjdk-7-jdk bigtop-utils hadoop-conf-pseudo w3m hive pig hbase hive-hbase hbase-master hbase-regionserver hbase-rest hbase-thrift zookeeper unzip
