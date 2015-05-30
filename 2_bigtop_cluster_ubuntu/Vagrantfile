@@ -27,11 +27,11 @@ Vagrant.configure("2") do |config|
 
   config.vm.define   :node1 do |node1|
     node1.vm.provider :google do |google, override|
-      google.name      = "master"
+      google.name      = "node1"
       google.zone      = "asia-east1-a" # Changhua County, Taiwan
       google.image     = "ubuntu-1404-trusty-v20150316"
       google.disk_size = 40
-      google.disk_name = "master"
+      google.disk_name = "node1"
       override.ssh.username = ENV['USER']
       override.ssh.private_key_path = ENV['GOOGLE_SSH_KEY_LOCATION']
       # override.vm.provision :shell do |shell|

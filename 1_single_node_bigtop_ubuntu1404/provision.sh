@@ -15,7 +15,7 @@ if [ ! -x /usr/bin/add-apt-repository ]; then
     apt-get -f -y install python-software-properties
 fi
 ## setup bigtop related apt repository
-wget -q http://archive.apache.org/dist/bigtop/bigtop-0.8.0/repos/GPG-KEY-bigtop -O- | sudo apt-key add -
+wget -q http://archive.apache.org/dist/bigtop/bigtop-0.7.0/repos/GPG-KEY-bigtop -O- | sudo apt-key add -
 add-apt-repository -y "deb http://bigtop.s3.amazonaws.com/releases/0.8.0/ubuntu/precise/x86_64 bigtop contrib"
 apt-get -y update
 ## install bigtop related packages

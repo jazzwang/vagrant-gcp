@@ -8,11 +8,11 @@ Vagrant.configure("2") do |config|
   # config.ssh.pty = true
 
   config.vm.provider :google do |google, override|
-    google.name      = "bigtop"
+    google.name      = "bigtop2"
     google.zone      = "asia-east1-a" # Changhua County, Taiwan
     google.image     = "ubuntu-1404-trusty-v20150316"
     google.disk_size = 40
-    google.disk_name = "bigtop"
+    google.disk_name = "bigtop2"
     override.ssh.username = ENV['USER']
     override.ssh.private_key_path = ENV['GOOGLE_SSH_KEY_LOCATION']
     override.vm.provision :shell do |shell|
