@@ -10,13 +10,13 @@ Vagrant.configure("2") do |config|
   # [2] https://www.shell-tips.com/2014/09/08/sudo-sorry-you-must-have-a-tty-to-run-sudo/
   # config.ssh.pty = true
 
-  config.vm.define   :puppet do |puppet|
-    puppet.vm.provider :google do |google, override|
-      google.name      = "puppet"
+  config.vm.define   :master do |master|
+    master.vm.provider :google do |google, override|
+      google.name      = "master"
       google.zone      = "asia-east1-a" # Changhua County, Taiwan
       google.image     = "ubuntu-1404-trusty-v20150316"
       google.disk_size = 40
-      google.disk_name = "puppet"
+      google.disk_name = "master"
       override.ssh.username = ENV['USER']
       override.ssh.private_key_path = ENV['GOOGLE_SSH_KEY_LOCATION']
       # override.vm.provision :shell do |shell|
@@ -25,13 +25,13 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define   :node1 do |node1|
-    node1.vm.provider :google do |google, override|
-      google.name      = "node1"
+  config.vm.define   :worker1 do |worker1|
+    worker1.vm.provider :google do |google, override|
+      google.name      = "worker1"
       google.zone      = "asia-east1-a" # Changhua County, Taiwan
       google.image     = "ubuntu-1404-trusty-v20150316"
       google.disk_size = 40
-      google.disk_name = "node1"
+      google.disk_name = "worker1"
       override.ssh.username = ENV['USER']
       override.ssh.private_key_path = ENV['GOOGLE_SSH_KEY_LOCATION']
       # override.vm.provision :shell do |shell|
