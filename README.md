@@ -427,7 +427,7 @@ NAME ZONE MACHINE_TYPE PREEMPTIBLE INTERNAL_IP EXTERNAL_IP STATUS
 
 ## Lab 1-1 : 佈署單機 Apache BigTop 於 CentOS 虛擬機器
 
-* 第二個範例是關於使用 Vagrant 在 Google Compute Engine 上啟動一台 CentOS 6 的虛擬機器，然後透過 SSH 連線，手動執行佈署 provision.sh 的佈署腳本。這個腳本可以在 CentOS 6 上安裝 Apache BigTop 的 Hadoop, HBase, Pig 與 Hive 執行環境。
+* 第二個範例是關於使用 Vagrant 在 Google Compute Engine 上啟動一台 CentOS 6 的虛擬機器，然後透過 SSH 連線，手動執行佈署 provision.sh 的佈署腳本。這個腳本可以在 CentOS 6 上安裝 Apache BigTop 0.7 的 Hadoop, HBase, Pig 與 Hive 執行環境。
 * 請切換到 `1_single_node_bigtop_centos6` 子目錄，並執行 `vagrant up` 指令。
 
 ```
@@ -457,7 +457,35 @@ Bringing machine 'default' up with 'google' provider...
 ==> default:  -- IP Forward:      
 ==> default:  -- External IP:     
 ==> default:  -- Autodelete Disk: true
+==> default: Waiting for instance to become "ready"...
+==> default: Machine is booted and ready for use!
+==> default: Waiting for SSH to become available...
+==> default: Machine is ready for SSH access!
+==> default: Rsyncing folder: /home/jazzwang/vagrant-gcp/1_single_node_bigtop_centos6/ => /vagrant
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ vagrant status
+Current machine states:
+ 
+default                   running (google)
+ 
+The Google instance is running. To stop this machine, you can run
+`vagrant halt`. To destroy the machine, you can run `vagrant destroy`.
+```
 
+* 虛擬機器創建完畢後，vagrant-google 擴充元件會用 rsync 將本地端的資料，複製到 Google Compute Engine 的虛擬機器上，並存放於 /vagrant 目錄中。
+* 因此，我們想要執行的 `provision.sh` 因為 Vagrant 已將幫我們複製到 GCE VM 上了，您只需要 SSH 進入虛擬機器，然後以 sudo 權限執行 `/vagrant/provision.sh` 即可。
+
+```
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ vagrant ssh     
+[jazzwang@bigtop1 ~]$ sudo /vagrant/provision.sh 
+USER=root
+Loaded plugins: downloadonly, fastestmirror, security
+Setting up Install Process
+Determining fastest mirrors
+ * base: centos.mirrors.tds.net
+ * extras: mirror.san.fastserv.com
+ * updates: mirrors.cat.pdx.edu
+
+.... SKIP ....... SKIP ....... SKIP ....... SKIP ...
 ```
 
 * **備註：**由於 Google Compute Engine 一段時間就會更新虛擬機器的映像檔，因此如果未來各位在執行時無法正確執行，也有可能是因為 VM Image 的名稱有變動。此時，請先使用 Google Cloud SDK 的指令 `gcloud compute images list` 查詢目前 Google Cloud Engine 的映像檔名稱，然後才對應修改 Vagrantfile 內容的 google.image 變數內容。
@@ -488,4 +516,40 @@ ubuntu-1410-utopic-v20150509        ubuntu-os-cloud   ubuntu-14-10              
 ubuntu-1504-vivid-v20150422         ubuntu-os-cloud   ubuntu-15-04                  READY
 windows-server-2008-r2-dc-v20150331 windows-cloud     windows-2008-r2               READY
 windows-server-2012-r2-dc-v20150331 windows-cloud     windows-2012-r2               READY
+```
+
+[TOC]
+
+## Lab 1-2 : 自動佈署 BigTop 於 Ubuntu 虛擬機器
+
+* 第二個範例是關於使用 Vagrant 在 Google Compute Engine 上啟動一台 Ubuntu 14.04 的虛擬機器，並自動執行佈署腳本 `provision.sh`。這個腳本可以在 Ubuntu 14.04 上安裝 Apache BigTop 0.7 的 Hadoop, HBase, Pig 與 Hive 執行環境。
+* 請切換到 `1_single_node_bigtop_ubuntu1404` 子目錄，並執行 `vagrant up` 指令。
+
+```
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ cd ~/vagrant-gcp/1_single_node_bigtop_ubuntu1404/
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_ubuntu1404 $ vagrant status
+Current machine states:
+ 
+default                   not created (google)
+ 
+The Google instance is not created. Run `vagrant up` to create it.
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_ubuntu1404 $ vagrant up    
+Bringing machine 'default' up with 'google' provider...
+==> default: Warning! The Google provider doesn't support any of the Vagrant
+==> default: high-level network configurations (`config.vm.network`). They
+==> default: will be silently ignored.
+==> default: Launching an instance with the following settings...
+==> default:  -- Name:            bigtop2
+==> default:  -- Type:            n1-standard-1
+==> default:  -- Disk type:       pd-standard
+==> default:  -- Disk size:       40 GB
+==> default:  -- Disk name:       bigtop2
+==> default:  -- Image:           ubuntu-1404-trusty-v20150316
+==> default:  -- Zone:            asia-east1-a
+==> default:  -- Network:         default
+==> default:  -- Metadata:        '{}'
+==> default:  -- Tags:            '[]'
+==> default:  -- IP Forward:      
+==> default:  -- External IP:     
+==> default:  -- Autodelete Disk: true
 ```
