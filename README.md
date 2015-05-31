@@ -2,11 +2,12 @@
 
 這裡存放了一些關於如何使用 `vagrant-google` 擴充元件來佈署 Hadoop BigTop 與 Cloudera Manager 到 Google Compute Engine 的範例。
 
-## Requirement
+## Requirement 前置作業
 
  * 註冊一個 Google Cloud Platform 的帳號
     - https://console.developers.google.com/billing/freetrial
     - 產生 Google Cloud Platform API 的 OAuth P12 金鑰
+    - 啟用 Google Compute Engine 的計費
  * 註冊一個 Koding 的帳號
     - https://koding.com/Register
 
@@ -121,11 +122,8 @@ Backing up [/home/jazzwang/.bashrc] to [/home/jazzwang/.bashrc.backup].
 [/home/jazzwang/.bashrc] has been updated.
 Start a new shell for the changes to take effect.
  
- 
 For more information on how to get started, please visit:
   https://developers.google.com/cloud/sdk/gettingstarted
- 
- 
  
  Authenticating to Google Compute Engine by running:
  
@@ -135,3 +133,93 @@ For more information on how to get started, please visit:
  
 ```
 
+## STEP 3 : 設定 Google Cloud SDK
+
+* 接下來，我們需要進一步設定 Google Cloud SDK。請參考上一步的指示，輸入指令 `source ~/.bashrc ; gcloud auth login` 來將登入 Google Cloud Platform 的認証資訊，存放於 VM 的開發環境中。
+* 輸入上述指令後，會看到畫面上出現一串超連結，請點選超連結，並登入您申請 Google Cloud Platform 的帳號密碼。並將畫面上出現的認証碼複製貼上到 `Enter verification code:` 後方。
+
+```
+jazzwang: ~/vagrant-gcp $ source ~/.bashrc ; gcloud auth login
+Go to the following link in your browser:
+ 
+    https://accounts.google.com/o/oauth2/auth?redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&prompt=select_account&response_type
+=code&client_id=32555940559.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%
+2Fwww.googleapis.com%2Fauth%2Fcloud-platform+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fappengine.admin+https%3A%2F%2Fwww.googleapi
+s.com%2Fauth%2Fcompute&access_type=offline
+  
+Enter verification code:  
+```
+
+* 接著，請遵照畫面上的指示，繼續輸入 `gcloud config set project PROJECT_ID`，請注意，這裡的 `PROJECT_ID` 是您申請的 Google Cloud Platform 的專案代號。預設專案名稱為 "My Project"，請注意這裡要填的是「專案ID（Project ID)」，不是專案名稱，請自行依照您取得的「專案 ID」進行命令的微調。
+
+```
+Saved Application Default Credentials.
+ 
+You are now logged in as [************@gmail.com].
+Your current project is [None].  You can change this setting by running:
+  $ gcloud config set project PROJECT_ID
+
+jazzwang: ~/vagrant-gcp $ gcloud config set project  valued-aquifer-528
+```
+
+* 接下來，由於我們會需要一組 SSH 金鑰，可以用來登入 Google Compute Engine 的 VM，因此您可以使用 `gcloud compute config-ssh` 指令來產生預設的金鑰，並讓 Google Cloud SDK 自動幫您上傳到 Google Cloud Platform。
+
+```
+jazzwang: ~/vagrant-gcp $ gcloud compute config-ssh
+WARNING: You do not have an SSH key for Google Compute Engine.
+WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
+This tool needs to create the directory [/home/jazzwang/.ssh] before 
+being able to generate SSH keys.
+ 
+Do you want to continue (Y/n)?
+```
+
+* 按下 `Enter` 鍵，讓 Google Cloud SDK 自動幫您產生到家目錄下預設存放 SSH 金鑰的路徑。如果您希望未來在使用這組金鑰時，需要另外打密碼，請在以下看到的畫面處輸入您想要的保護密碼。這裡為了後續操作方便，並沒有輸入保護密碼。直接按 `Enter` 跳過。產出的私鑰預設存放於 `${HOME}/.ssh/google_compute_engine`，公鑰則存放於 `${HOME}/.ssh/google_compute_engine.pub`。
+
+```
+WARNING: You do not have an SSH key for Google Compute Engine.
+WARNING: [/usr/bin/ssh-keygen] will be executed to generate a key.
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/jazzwang/.ssh/google_compute_engine.
+Your public key has been saved in /home/jazzwang/.ssh/google_compute_engine.pub.
+The key fingerprint is:
+e4:c7:d5:48:c7:4a:11:4d:a9:0b:40:be:dd:c7:69:12 jazzwang@jazzwang
+The key's randomart image is:
++--[ RSA 2048]----+
+|       ..   +*o. |
+|       ..  ..++  |
+|        o. .Eo.  |
+|       o +.ooo . |
+|        S +.o.=  |
+|         .  .+   |
+|                 |
+|                 |
+|                 |
++-----------------+
+Updated [https://www.googleapis.com/compute/v1/projects/valued-aquifer-528].
+WARNING: No host aliases were added to your SSH configs because you do not have any instances. Try running this command again afte
+r creating some instances.
+```
+
+* 備註：如果您遇到以下的錯誤訊息，代表您填錯 `PROJECT_ID` 或者尚未啟用「Google Compute Engine 的計費」，請回到 https://console.developers.google.com/ 去開啟您的 Google Compute Engine 服務。
+
+```
+ERROR: (gcloud.compute.config-ssh) Could not fetch project resource:
+ - The resource 'projects/hadoop-labs' was not found
+```
+
+## STEP 4 : 安裝 Vagrant 與相關套件
+
+* Vagrant　是一套用來管理虛擬機器的軟體，預設用來管理運行於 VirtualBox, VMWare 等私有雲的虛擬機器。透過安裝擴充元件的方式，可以額外支援像是 Amazon AWS EC2 與 Google Compute Engine 等公有雲的虛擬機器。
+* 本範例預計會使用到三個 Vagrant 的擴充元件(Plugin)，依序為：
+	* [vagrant-google](https://github.com/mitchellh/vagrant-google)
+	* [vagrant-env](https://github.com/gosuri/vagrant-env)
+	* [vagrant-hostmanager](https://github.com/smdahlen/vagrant-hostmanager)
+
+* 為了簡化安裝設定 Vagrant 的流程，本範例提供了 `install-vagrant` 的腳本。請執行 `bin/install-vagrant` 就可以依序完成安裝 (A) Vagrant (B) vagrant-google (C) vagrant-env (D) vagrant-hostmanager (E) 新增 vagrant-google 的預設 Vagrant Box
+
+```
+jazzwang: ~/vagrant-gcp $ bin/install-vagrant
+```

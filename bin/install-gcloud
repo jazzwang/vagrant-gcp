@@ -1,8 +1,5 @@
 #!/bin/bash
-# 
-if [ "`id -u`" != "0" ]; then
-    alias apt-get="sudo apt-get"
-fi
+[ "`id -u`" != "0" ] && exec sudo su -c "$0" "$@"
 
 # To use gcloud compute, install the Google Cloud SDK if you have not already.
 # System Requirements: Google Cloud SDK runs on Linux, Mac OS X, and Windows, 
