@@ -428,6 +428,37 @@ NAME ZONE MACHINE_TYPE PREEMPTIBLE INTERNAL_IP EXTERNAL_IP STATUS
 ## Lab 1-1 : 佈署單機 Apache BigTop 於 CentOS 虛擬機器
 
 * 第二個範例是關於使用 Vagrant 在 Google Compute Engine 上啟動一台 CentOS 6 的虛擬機器，然後透過 SSH 連線，手動執行佈署 provision.sh 的佈署腳本。這個腳本可以在 CentOS 6 上安裝 Apache BigTop 的 Hadoop, HBase, Pig 與 Hive 執行環境。
+* 請切換到 `1_single_node_bigtop_centos6` 子目錄，並執行 `vagrant up` 指令。
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ cd ~/vagrant-gcp/1_single_node_bigtop_centos6/
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ vagrant status
+Current machine states:
+ 
+default                   not created (google)
+ 
+The Google instance is not created. Run `vagrant up` to create it.
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ vagrant up
+Bringing machine 'default' up with 'google' provider...
+==> default: Warning! The Google provider doesn't support any of the Vagrant
+==> default: high-level network configurations (`config.vm.network`). They
+==> default: will be silently ignored.
+==> default: Launching an instance with the following settings...
+==> default:  -- Name:            bigtop1
+==> default:  -- Type:            n1-standard-1
+==> default:  -- Disk type:       pd-standard
+==> default:  -- Disk size:       40 GB
+==> default:  -- Disk name:       bigtop1
+==> default:  -- Image:           centos-6-v20150423
+==> default:  -- Zone:            asia-east1-a
+==> default:  -- Network:         default
+==> default:  -- Metadata:        '{}'
+==> default:  -- Tags:            '[]'
+==> default:  -- IP Forward:      
+==> default:  -- External IP:     
+==> default:  -- Autodelete Disk: true
+
+```
 
 * **備註：**由於 Google Compute Engine 一段時間就會更新虛擬機器的映像檔，因此如果未來各位在執行時無法正確執行，也有可能是因為 VM Image 的名稱有變動。此時，請先使用 Google Cloud SDK 的指令 `gcloud compute images list` 查詢目前 Google Cloud Engine 的映像檔名稱，然後才對應修改 Vagrantfile 內容的 google.image 變數內容。
 
