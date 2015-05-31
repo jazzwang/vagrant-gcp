@@ -567,3 +567,14 @@ Bringing machine 'default' up with 'google' provider...
 jazzwang: ~/vagrant-gcp/1_single_node_bigtop_ubuntu1404 $ vagrant destroy -f
 ==> default: Terminating the instance...
 ```
+
+## Reference 參考資料
+
+[1] Vagrant - https://www.vagrantup.com/
+[2] vagrant-env - https://github.com/gosuri/vagrant-env
+[3] vagrant-google - https://github.com/mitchellh/vagrant-google
+[4] vagrant-hostmanager - https://github.com/smdahlen/vagrant-hostmanager
+[5] Puppet - https://puppetlabs.com/
+[6] Puppet on Ubuntu - https://help.ubuntu.com/14.04/serverguide/puppet.html
+[7] 'puppet-cloudera' - Puppet Module to deploy Cloudera Manager and CDH - https://forge.puppetlabs.com/razorsedge/cloudera
+[8] source of 'puppet-cloudera' - https://github.com/razorsedge/puppet-cloudera
