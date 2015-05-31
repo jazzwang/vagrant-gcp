@@ -518,6 +518,13 @@ windows-server-2008-r2-dc-v20150331 windows-cloud     windows-2008-r2           
 windows-server-2012-r2-dc-v20150331 windows-cloud     windows-2012-r2               READY
 ```
 
+* 實驗結束後，**別忘了關閉 Google Compute Engine 的虛擬機器喔**～以免試用的額度用完後，開始正式從信用卡扣款。
+
+```
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ vagrant destroy -f
+==> default: Terminating the instance...
+```
+
 [TOC]
 
 ## Lab 1-2 : 自動佈署 BigTop 於 Ubuntu 虛擬機器
@@ -552,4 +559,11 @@ Bringing machine 'default' up with 'google' provider...
 ==> default:  -- IP Forward:      
 ==> default:  -- External IP:     
 ==> default:  -- Autodelete Disk: true
+```
+
+* 實驗結束後，**別忘了關閉 Google Compute Engine 的虛擬機器喔**～以免試用的額度用完後，開始正式從信用卡扣款。
+
+```
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_ubuntu1404 $ vagrant destroy -f
+==> default: Terminating the instance...
 ```
