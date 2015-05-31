@@ -12,6 +12,7 @@ if [ ! -x /usr/bin/vagrant ]; then
   dpkg -i vagrant*.deb
 fi
 
-vagrant plugin install vagrant-google
-vagrant plugin install vagrant-env
+vagrant plugin install --verbose vagrant-hostmanager
+vagrant plugin install --verbose vagrant-google
+vagrant plugin install --verbose vagrant-env
 vagrant box add gce https://github.com/mitchellh/vagrant-google/raw/master/google.box

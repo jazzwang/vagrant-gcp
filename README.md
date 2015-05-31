@@ -2,14 +2,17 @@
 
 這裡存放了一些關於如何使用 `vagrant-google` 擴充元件來佈署 Hadoop BigTop 與 Cloudera Manager 到 Google Compute Engine 的範例。
 
+[TOC]
+
 ## Requirement 前置作業
 
  * 註冊一個 Google Cloud Platform 的帳號
-    - https://console.developers.google.com/billing/freetrial
+    - https://console.developers.google.com/billing/freetrial - 註冊試用。
     - 產生 Google Cloud Platform API 的 OAuth P12 金鑰
     - 啟用 Google Compute Engine 的計費
  * 註冊一個 Koding 的帳號
-    - https://koding.com/Register
+    - https://koding.com/Register - 註冊試用
+    - 預設有一台 Ubuntu 的虛擬機器可以免費使用。
 
 ## STEP 1 : 啟動 VM 並複製 vagrant-gcp 範例
 
@@ -29,6 +32,9 @@ Checking connectivity... done.
 jazzwang: ~ $ cd vagrant-gcp/
 jazzwang: ~/vagrant-gcp $ cp env_sample .env
 ```
+
+[TOC]
+
 ## STEP 2 : 安裝 Google Cloud SDK
 
 * 透過這個範例，您可以快速地體驗一下 Google Cloud Platform 的功能。為了方便後續範例的操作，我們使用 Google Cloud SDK 來快速打造一個 Google Cloud Platform 的實驗環境。
@@ -133,6 +139,8 @@ For more information on how to get started, please visit:
  
 ```
 
+[TOC]
+
 ## STEP 3 : 設定 Google Cloud SDK
 
 * 接下來，我們需要進一步設定 Google Cloud SDK。請參考上一步的指示，輸入指令 `source ~/.bashrc ; gcloud auth login` 來將登入 Google Cloud Platform 的認証資訊，存放於 VM 的開發環境中。
@@ -203,23 +211,250 @@ WARNING: No host aliases were added to your SSH configs because you do not have 
 r creating some instances.
 ```
 
-* 備註：如果您遇到以下的錯誤訊息，代表您填錯 `PROJECT_ID` 或者尚未啟用「Google Compute Engine 的計費」，請回到 https://console.developers.google.com/ 去開啟您的 Google Compute Engine 服務。
+* **備註：**如果您遇到以下的錯誤訊息，代表您填錯 `PROJECT_ID` 或者尚未啟用「Google Compute Engine 的計費」，請回到 https://console.developers.google.com/ 去開啟您的 Google Compute Engine 服務。
 
 ```
 ERROR: (gcloud.compute.config-ssh) Could not fetch project resource:
  - The resource 'projects/hadoop-labs' was not found
 ```
 
+[TOC]
+
 ## STEP 4 : 安裝 Vagrant 與相關套件
 
 * Vagrant　是一套用來管理虛擬機器的軟體，預設用來管理運行於 VirtualBox, VMWare 等私有雲的虛擬機器。透過安裝擴充元件的方式，可以額外支援像是 Amazon AWS EC2 與 Google Compute Engine 等公有雲的虛擬機器。
 * 本範例預計會使用到三個 Vagrant 的擴充元件(Plugin)，依序為：
-	* [vagrant-google](https://github.com/mitchellh/vagrant-google)
-	* [vagrant-env](https://github.com/gosuri/vagrant-env)
-	* [vagrant-hostmanager](https://github.com/smdahlen/vagrant-hostmanager)
+	* [vagrant-google](https://github.com/mitchellh/vagrant-google) - 讓 Vagrant 支援管理 Google Compute Engine 的能力
+	* [vagrant-env](https://github.com/gosuri/vagrant-env) - 讓 Vagrant 支援從 .env 檔讀取環境變數的能力
+	* [vagrant-hostmanager](https://github.com/smdahlen/vagrant-hostmanager) - 讓 Vagrant 支援自動產生並同步多台虛擬機器 /etc/hosts 的能力
 
 * 為了簡化安裝設定 Vagrant 的流程，本範例提供了 `install-vagrant` 的腳本。請執行 `bin/install-vagrant` 就可以依序完成安裝 (A) Vagrant (B) vagrant-google (C) vagrant-env (D) vagrant-hostmanager (E) 新增 vagrant-google 的預設 Vagrant Box
 
 ```
 jazzwang: ~/vagrant-gcp $ bin/install-vagrant
+Ign http://ap-southeast-1.ec2.archive.ubuntu.com trusty InRelease
+Ign http://ap-southeast-1.ec2.archive.ubuntu.com trusty-updates InRelease
+Hit http://ap-southeast-1.ec2.archive.ubuntu.com trusty Release.gpg
+Get:1 http://ap-southeast-1.ec2.archive.ubuntu.com trusty-updates Release.gpg [933 B]
+
+.... SKIP ....... SKIP ....... SKIP ....... SKIP ...
+
+Unpacking vagrant (1:1.7.2) ...
+Setting up vagrant (1:1.7.2) ...
+Installing the 'vagrant-hostmanager' plugin. This can take a few minutes...
+Installed the plugin 'vagrant-hostmanager (1.5.0)'!
+Installing the 'vagrant-google' plugin. This can take a few minutes...
+Installed the plugin 'vagrant-google (0.1.5)'!
+Installing the 'vagrant-env' plugin. This can take a few minutes...
+Installed the plugin 'vagrant-env (0.0.2)'!
+==> box: Adding box 'gce' (v0) for provider: 
+    box: Downloading: https://github.com/mitchellh/vagrant-google/raw/master/google.box
+==> box: Successfully added box 'gce' (v0) for 'google'!
+```
+
+* 如果想瞭解目前所使用的 Vagrant 擴充元件有哪些，可以執行 `vagrant plugin list` 來檢查，若自動安裝正確，您應該會看到以下結果：
+
+```
+jazzwang: ~/vagrant-gcp $ vagrant plugin list
+vagrant-env (0.0.2)
+vagrant-google (0.1.5)
+vagrant-hostmanager (1.5.0)
+vagrant-share (1.1.3, system)
+```
+
+* **備註：**如果您看到的擴充元件列表與上述不同，也可以重新執行以下指令，來確保擴充元件已正確安裝：
+
+```
+jazzwang: ~/vagrant-gcp $ vagrant plugin install --verbose vagrant-hostmanager
+jazzwang: ~/vagrant-gcp $ vagrant plugin install --verbose vagrant-google
+jazzwang: ~/vagrant-gcp $ vagrant plugin install --verbose vagrant-env
+```
+
+[TOC]
+
+## STEP 5 : 設定 .env 環境變數檔
+
+* 接下來，我們將使用 Vagrant 來控制 Google Compute Engine 啟動、關閉虛擬機器的流程。為了讓各位可以做最小幅度的修改，我們在 Vagrantfile 中使用環境變數來讀取 Google Compute Engine 的 OAuth P12 金鑰與您專屬的服務帳戶電子郵件地址。
+* 若您還沒有產生 Google Cloud Platform 的 OAuth P12 金鑰，請先連線至https://console.developers.google.com/project/＄{PROJECT_ID}/apiui/credential (請自行使用您申請到的專案代號來取代 ${PROJECT_ID} 處的字串，或者在 Google Developer Console 選擇「API和驗證 > 憑證 > OAuth > 建立新的用戶端ID > 應用程式類型 : 服務帳戶 > 索引鍵類型
+: P12 金鑰 > 建立用戶端 ID」)
+* 儲存 P12 金鑰檔，並且以拖曳的方式，上傳至 Koding.com 的 VM 中
+* 於 Koding.com 的 VM 中，建立一隱藏目錄，名為 `.gcp`
+
+```
+jazzwang: ~/vagrant-gcp $ mkdir -p ~/.gcp
+```
+
+* 將上傳的 P12 金鑰檔放入家目錄下的 `.gcp` 子目錄中。
+* 通常 P12 金鑰檔的名稱為 ${PROJECT_NAME}-000000000000.p12 ，是使用「專案名稱(Project Name)」開頭，後面接著共計 12 碼的數字。
+
+```
+GOOGLE_PROJECT_ID="這裡填入 PROJECT_ID"
+GOOGLE_CLIENT_EMAIL="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@developer.gserviceaccount.com"
+GOOGLE_KEY_LOCATION="~/.gcp/********-000000000000.p12"
+GOOGLE_SSH_USER=$USER
+GOOGLE_SSH_KEY_LOCATION="~/.ssh/google_compute_engine"
+```
+
+* 這裡需要修改的內容包括 (A) GOOGLE_PROJECT_ID 環境變數 (B) GOOGLE_CLIENT_EMAIL 環境變數  (C) GOOGLE_KEY_LOCATION 環境變數 ，共計三處。
+	* 關於 GOOGLE_PROJECT_ID 同上說明，請參考 https://console.developers.google.com/ 的專案資訊，正確填寫專案代號（注意！不是專案名稱哦！）
+	* 關於 GOOGLE_CLIENT_EMAIL 請參考 https://console.developers.google.com/project/＄{PROJECT_ID}/apiui/credential 的內容，填入「OAuth >  服務帳戶 > 電子郵件地址」的內容。
+	* 關於 GOOGLE_CLIENT_EMAIL 請參考 https://console.developers.google.com/project/＄{PROJECT_ID}/apiui/credential 的內容，填入「OAuth >  服務帳戶 > 電子郵件地址」的內容。
+	* 關於 GOOGLE_KEY_LOCATION 請依您上傳到 VM 的 P12 金鑰檔的檔案名稱加以修正。
+* 至於 GOOGLE_SSH_USER 環境變數與 GOOGLE_SSH_KEY_LOCATION 環境變數，可不做修改。因為 $USER 等於您目前所使用的「Koding.com VM 使用者名稱」。而 `~/.ssh/google_compute_engine` 則是在 STEP 3 產生的 SSH 金鑰。若您要修改成自己的 SSH 金鑰 (Ex. ~/.ssh/id_rsa)，您需要使用 Google Cloud SDK 註冊該 SSH 金鑰，會比較麻煩。
+* **注意！** 建議若是在自己的環境中執行時，請不要使用 root 身份，否則有些虛擬機器的映像檔(VM Image)會限制 root 的 SSH 連線。會造成 Vagrant 正確開啟了虛擬機器，但遲遲無法連線的狀態。
+* **備註：**有用過 Vagrant 控制 VirtualBox 的管理者可能會注意到觀念上不太一樣的地方，預設 Vagrant 會使用 `vagrant` 這個使用者身份連線到開啟的虛擬機器中，然後透過 sudo 權限去執行佈署用 (Provision) 的程式碼。但在 Google Compute Engine 上，則是使用 GOOGLE_SSH_USER 環境變數所指定的使用者名稱作為預設 SSH 登入的身份。因此，請注意 GOOGLE_SSH_USER 環境變數設定的使用者名稱，必須
+
+[TOC]
+
+## Lab 0 : 驗證 Vagrant 可否啟動 GCE VM
+
+* 經過 STEP 1 ~ 5 的設定後，您總算可以透過簡單的指令，透過 Vagrantfile 與命令列彈性地控制 Google Compute Engine 上的虛擬機器了。
+* 本範例第一個實作範例是在 Google Compute Engine 上啟動一台 Debian 的虛擬機器。請切換到 `0_quickstart` 子目錄，並執行指令 `vagrant status` 進行檢查 。若 STEP 1~5 的設定都正確，您應該會看到以下的結果：
+
+```
+jazzwang: ~/vagrant-gcp $ cd 0_quickstart/
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant status
+Current machine states:
+
+default                   not created (google)
+
+The Google instance is not created. Run `vagrant up` to create it.
+```
+* 若您看到如下的錯誤訊息，通常代表 .env 檔設定有誤。(以下範例是 P12 金鑰檔未能正確填寫造成的錯誤訊息)
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant status
+/home/jazzwang/.vagrant.d/gems/gems/google-api-client-0.8.6/lib/google/api_client/auth/key_utils.rb:88:in `rescue in load_key': In
+valid keyfile or passphrase (ArgumentError)
+        from /home/jazzwang/.vagrant.d/gems/gems/google-api-client-0.8.6/lib/google/api_client/auth/key_utils.rb:80:in `load_key'
+
+.... SKIP ....... SKIP ....... SKIP ....... SKIP ...
+```
+
+＊ 若您可正確看到 `vagrant status` 的結果，顯示虛擬機器的狀態是 `not created (google)` ，那代表您的設定是正確的。請繼續執行指令 `vagrant up` ，就可以在 Google Compute Engine 上建立一台 Debian 的虛擬機器。執行結果如以下範例：
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant up
+Bringing machine 'default' up with 'google' provider...
+==> default: Warning! The Google provider doesn't support any of the Vagrant
+==> default: high-level network configurations (`config.vm.network`). They
+==> default: will be silently ignored.
+==> default: Launching an instance with the following settings...
+==> default:  -- Name:            quickstart
+==> default:  -- Type:            n1-standard-1
+==> default:  -- Disk type:       pd-standard
+==> default:  -- Disk size:       10 GB
+==> default:  -- Disk name:       
+==> default:  -- Image:           debian-7-wheezy-v20140619
+==> default:  -- Zone:            asia-east1-a
+==> default:  -- Network:         default
+==> default:  -- Metadata:        '{}'
+==> default:  -- Tags:            '[]'
+==> default:  -- IP Forward:      
+==> default:  -- External IP:     
+==> default:  -- Autodelete Disk: true
+==> default: Waiting for instance to become "ready"...
+==> default: Machine is booted and ready for use!
+==> default: Waiting for SSH to become available...
+==> default: Machine is ready for SSH access!
+==> default: Rsyncing folder: /home/jazzwang/vagrant-gcp/0_quickstart/ => /vagrant
+```
+
+* **備註：**您若看到以下訊息，代表啟動所需的預設 Vagrant Box 'gce' 不存在，請重新執行指令 `vagrant box add gce https://github.com/mitchellh/vagrant-google/raw/master/google.box` 進行下載。並使用 `vagrant box list` 指令檢查，是否有名為 `gce` 的 Vagrant Box (虛擬機器映像檔，VM Image)存在。
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant up
+Bringing machine 'default' up with 'google' provider...
+==> default: Box 'gce' could not be found. Attempting to find and install...
+    default: Box Provider: google
+    default: Box Version: >= 0
+==> default: Adding box 'gce' (v0) for provider: google
+    default: Downloading: gce
+An error occurred while downloading the remote file. The error 
+message, if any, is reproduced below. Please fix this error and try
+again.
+ 
+Couldn't open file /home/jazzwang/vagrant-gcp/0_quickstart/gce
+jazzwang: ~/vagrant-gcp $ vagrant box add gce https://github.com/mitchellh/vagrant-google/raw/master/google.box
+==> box: Adding box 'gce' (v0) for provider: 
+    box: Downloading: https://github.com/mitchellh/vagrant-google/raw/master/google.box
+==> box: Successfully added box 'gce' (v0) for 'google'!
+jazzwang: ~/vagrant-gcp $ vagrant box list
+gce (google, 0)
+```
+
+* 若您可以看到正確啟動的結果，接下來就可以使用 `vagrant ssh` 指令，連線進入 Google Compute Engine 上的虛擬機器。
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant ssh
+Linux quickstart 3.2.0-4-amd64 #1 SMP Debian 3.2.57-3+deb7u2 x86_64
+ 
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+ 
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+jazzwang@quickstart:~$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Debian
+Description:    Debian GNU/Linux 7.5 (wheezy)
+Release:        7.5
+Codename:       wheezy
+jazzwang@quickstart:~$ exit
+logout
+Connection to 104.155.206.246 closed.
+```
+
+* 此時，您也可以用 Google Cloud SDK 的指令 `gcloud compute instances list` 來檢查目前啟動的虛擬機器狀態。
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ gcloud compute instances list
+NAME       ZONE         MACHINE_TYPE  PREEMPTIBLE INTERNAL_IP   EXTERNAL_IP     STATUS
+quickstart asia-east1-a n1-standard-1             10.240.98.137 104.155.206.246 RUNNING
+```
+
+* 由於 Google Compute Engine 使依照虛擬機器的執行時間計費，因此若您不想再使用了，可以使用 `vagrant destroy -f` 指令，將該虛擬機器強制關閉並刪除。
+
+```
+jazzwang: ~/vagrant-gcp/0_quickstart $ vagrant destroy -f
+==> default: Terminating the instance...
+jazzwang: ~/vagrant-gcp/0_quickstart $ gcloud compute instances list
+NAME ZONE MACHINE_TYPE PREEMPTIBLE INTERNAL_IP EXTERNAL_IP STATUS
+```
+
+[TOC]
+
+## Lab 1-1 : 佈署單機 Apache BigTop 於 CentOS 虛擬機器
+
+* 第二個範例是關於使用 Vagrant 在 Google Compute Engine 上啟動一台 CentOS 6 的虛擬機器，然後透過 SSH 連線，手動執行佈署 provision.sh 的佈署腳本。這個腳本可以在 CentOS 6 上安裝 Apache BigTop 的 Hadoop, HBase, Pig 與 Hive 執行環境。
+
+* **備註：**由於 Google Compute Engine 一段時間就會更新虛擬機器的映像檔，因此如果未來各位在執行時無法正確執行，也有可能是因為 VM Image 的名稱有變動。此時，請先使用 Google Cloud SDK 的指令 `gcloud compute images list` 查詢目前 Google Cloud Engine 的映像檔名稱，然後才對應修改 Vagrantfile 內容的 google.image 變數內容。
+
+```
+jazzwang: ~/vagrant-gcp/1_single_node_bigtop_centos6 $ gcloud compute images list
+NAME                                PROJECT           ALIAS              DEPRECATED STATUS
+centos-6-v20150526                  centos-cloud      centos-6                      READY
+centos-7-v20150526                  centos-cloud      centos-7                      READY
+coreos-alpha-695-0-0-v20150528      coreos-cloud                                    READY
+coreos-beta-681-0-0-v20150527       coreos-cloud                                    READY
+coreos-stable-647-2-0-v20150528     coreos-cloud      coreos                        READY
+backports-debian-7-wheezy-v20150526 debian-cloud      debian-7-backports            READY
+debian-7-wheezy-v20150526           debian-cloud      debian-7                      READY
+container-vm-v20150129              google-containers container-vm                  READY
+container-vm-v20150305              google-containers container-vm                  READY
+container-vm-v20150317              google-containers container-vm                  READY
+container-vm-v20150505              google-containers container-vm                  READY
+opensuse-13-1-v20150515             opensuse-cloud    opensuse-13                   READY
+opensuse-13-2-v20150511             opensuse-cloud    opensuse-13                   READY
+rhel-6-v20150526                    rhel-cloud        rhel-6                        READY
+rhel-7-v20150526                    rhel-cloud        rhel-7                        READY
+sles-11-sp3-v20150511               suse-cloud        sles-11                       READY
+sles-12-v20150511                   suse-cloud        sles-12                       READY
+ubuntu-1204-precise-v20150316       ubuntu-os-cloud   ubuntu-12-04                  READY
+ubuntu-1404-trusty-v20150316        ubuntu-os-cloud   ubuntu-14-04                  READY
+ubuntu-1410-utopic-v20150509        ubuntu-os-cloud   ubuntu-14-10                  READY
+ubuntu-1504-vivid-v20150422         ubuntu-os-cloud   ubuntu-15-04                  READY
+windows-server-2008-r2-dc-v20150331 windows-cloud     windows-2008-r2               READY
+windows-server-2012-r2-dc-v20150331 windows-cloud     windows-2012-r2               READY
 ```
