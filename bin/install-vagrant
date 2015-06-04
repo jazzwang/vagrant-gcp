@@ -1,15 +1,13 @@
 #!/bin/bash
 
-[ "`id -u`" != "0" ] && exec sudo su -c "$0" "$@"
-
 if [ ! -x /usr/bin/make ]; then
-  apt-get update
-  apt-get -y install libc-dev wget make gcc ruby2.0-dev ruby ruby-json ruby-ffi
+  sudo apt-get update
+  sudo apt-get -y install libc-dev wget make gcc ruby2.0-dev ruby ruby-json ruby-ffi
 fi
 
 if [ ! -x /usr/bin/vagrant ]; then
   wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
-  dpkg -i vagrant*.deb
+  sudo dpkg -i vagrant*.deb
 fi
 
 vagrant plugin install --verbose vagrant-hostmanager
