@@ -1,21 +1,19 @@
 #!/bin/bash
-[ "`id -u`" != "0" ] && exec sudo su -c "$0" "$@"
-
 # To use gcloud compute, install the Google Cloud SDK if you have not already.
 # System Requirements: Google Cloud SDK runs on Linux, Mac OS X, and Windows, 
 #                      and requires Python 2.7.x
 if [ ! -x /usr/bin/python2.7 ]; then
-    apt-get -y install python2.7
+    sudo apt-get -y install python2.7
 fi
 if [ ! -x /usr/bin/python ]; then
     ln -s /usr/bin/python2.7 /usr/bin/python
 fi
 # Use 'curl' to download Google Cloud SDK
 if [ ! -x /usr/bin/curl ]; then
-    apt-get -y install curl wget
+    sudo apt-get -y install curl wget
 fi
 if [ ! -x /usr/bin/ssh ]; then
-    apt-get -y install openssh-client
+    sudo apt-get -y install openssh-client
 fi
 # Download Google Cloud SDK and install
 if [ "$(which gcloud)" == "" ]; then
